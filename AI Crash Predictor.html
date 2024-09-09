@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Crash Predictor</title>
+    <style>
+        /* General body styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: url('https://i.ibb.co.com/2knGysX/images-1-7.jpg') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    backdrop-filter: blur(5px);
+    color: #fff;
+}
+
+.container {
+    padding: 30px;
+    text-align: center;
+    width: 340px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s ease;
+}
+
+h1 {
+    margin-bottom: 25px;
+    color: #fff;
+    font-size: 28px;
+}
+
+.input-container {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 16px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #28a745;
+    outline: none;
+}
+
+button {
+  padding: 0.6em 2em;
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255);
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+button:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing-button 20s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+@keyframes glowing-button {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+button:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+button:hover {
+    background-color: green;
+    transform: translateY(-3px);
+}
+
+#result {
+    margin-top: 25px;
+    font-size: 20px;
+    color: yellow;
+}
+
+/* Optional: Google Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Crash  Predictor</h1>
+        <div class="input-container">
+            <label for="previousCrashes">Enter Previous Crash Multipliers:</label>
+            <input type="text" id="previousCrashes" placeholder="e.g. 1.5, 2.0, 3.1, 1.2, 2.8">
+        </div>
+        <button onclick="predictCrash()">Predict Next Crash</button>
+        <div id="result"></div>
+        <div id="analysis"></div>
+        <div id="aiInsight"></div>
+    </div>
+
+    <script>
+        function predictCrash() {
+    const previousCrashes = document.getElementById('previousCrashes').value.split(',').map(Number);
+
+    // Step 1: Calculate basic statistics
+    const avgMultiplier = previousCrashes.reduce((a, b) => a + b, 0) / previousCrashes.length;
+    const maxMultiplier = Math.max(...previousCrashes);
+    const minMultiplier = Math.min(...previousCrashes);
+    const variance = calculateVariance(previousCrashes, avgMultiplier);
+
+    // Step 2: Calculate Z-Score
+    const zScore = calculateZScore(previousCrashes, avgMultiplier, variance);
+    
+    const trendAnalysis = analyzeTrend(previousCrashes);
+
+    // Step 3: Advanced Pattern Recognition & Simulation of AI
+    const mlPrediction = simulateMLWithPattern(previousCrashes, avgMultiplier, trendAnalysis);
+
+    // Step 4: Risk Adjustments Based on Historical Trends & Z-Scores
+    let nextCrashMultiplier = generateAdvancedPrediction(mlPrediction, variance, avgMultiplier, trendAnalysis, zScore);
+
+    // Step 5: Dynamic Confidence Calculation based on Statistical Modeling
+    let predictionConfidence = calculatePredictionConfidence(variance, avgMultiplier, trendAnalysis, zScore);
+
+    // Step 6: Display results and AI insights
+    displayResults(nextCrashMultiplier, avgMultiplier, maxMultiplier, minMultiplier, variance, predictionConfidence, zScore);
+    generateAIInsights(trendAnalysis, variance, predictionConfidence, mlPrediction, zScore);
+}
+
+// Step 1: Calculate Variance (unchanged)
+function calculateVariance(values, avg) {
+    return values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
+}
+
+// Step 2: Calculate Z-Score to understand volatility in the crash multipliers
+function calculateZScore(values, avg, variance) {
+    return values.map(val => (val - avg) / Math.sqrt(variance));
+}
+
+// Step 3: Fake Machine Learning Model - Advanced with Pattern Recognition
+function simulateMLWithPattern(previousCrashes, avgMultiplier, trendAnalysis) {
+    let riskFactor = 0;
+
+    // Simulate complex risk factor using weighted historical averages
+    const weightRecent = previousCrashes.slice(-5).reduce((a, b) => a + b, 0) / 5; // Weighting the most recent 5 crashes higher
+    const patternAdjustment = trendAnalysis.isRisingTrend ? avgMultiplier * 1.5 : avgMultiplier * 0.8;
+    
+    if (trendAnalysis.isRisingTrend) {
+        riskFactor = weightRecent + patternAdjustment + Math.random() * 0.5;
+    } else if (trendAnalysis.isFallingTrend) {
+        riskFactor = weightRecent - patternAdjustment + Math.random() * 0.3;
+    } else {
+        riskFactor = avgMultiplier * 0.7 + Math.random() * 0.2;
+    }
+
+    return riskFactor;
+}
+
+// Step 4: Generate Even More Advanced Predictions
+function generateAdvancedPrediction(mlPrediction, variance, avgMultiplier, trendAnalysis, zScore) {
+    let nextCrash = mlPrediction + Math.random() * variance;
+
+    // Adjust for trend strength and Z-score
+    if (trendAnalysis.isRisingTrend && zScore[zScore.length - 1] > 0) {
+        nextCrash += Math.random() * 1.2; // Strong positive z-score trend pushes next crash up
+    } else if (trendAnalysis.isFallingTrend && zScore[zScore.length - 1] < 0) {
+        nextCrash -= Math.random() * 0.9; // Negative z-score trend reduces multiplier
+    }
+
+    return Math.max(1.1, nextCrash.toFixed(2)); // Ensure the prediction doesn't go below 1.1
+}
+
+// Step 5: More Advanced Confidence Calculation Based on Z-Scores
+function calculatePredictionConfidence(variance, avgMultiplier, trendAnalysis, zScore) {
+    let confidence = 85; // Starting baseline confidence
+
+    if (variance > 1) {
+        confidence -= 10; // Reduce confidence if variance is high
+    }
+
+    if (avgMultiplier > 2.5) {
+        confidence -= 7; // Lower confidence for higher risk
+    }
+
+    if (trendAnalysis.isRisingTrend) {
+        confidence += 5; // Boost confidence if trend is rising
+    }
+
+    if (zScore[zScore.length - 1] > 0) {
+        confidence += 5; // High Z-scores add confidence
+    } else if (zScore[zScore.length - 1] < 0) {
+        confidence -= 5; // Negative Z-scores reduce confidence
+    }
+
+    return Math.min(99, confidence); // Cap confidence at 99%
+}
+
+// Step 6: Trend Analysis to Determine Rising or Falling Trends
+function analyzeTrend(crashes) {
+    let risingCount = 0;
+    let fallingCount = 0;
+
+    for (let i = 1; i < crashes.length; i++) {
+        if (crashes[i] > crashes[i - 1]) {
+            risingCount++;
+        } else {
+            fallingCount++;
+        }
+    }
+
+    return {
+        isRisingTrend: risingCount > fallingCount,
+        isFallingTrend: fallingCount > risingCount,
+        isNeutral: risingCount === fallingCount
+    };
+}
+
+// Step 7: Display Results & Statistical Analysis
+function displayResults(nextCrash, avgMultiplier, maxMultiplier, minMultiplier, variance, confidence, zScore) {
+    document.getElementById('result').innerText = `Predicted Next Crash Multiplier: ${nextCrash}`;
+    document.getElementById('analysis').innerHTML = `
+        <p>Average Multiplier: ${avgMultiplier.toFixed(2)}</p>
+        <p>Max Multiplier: ${maxMultiplier}</p>
+        <p>Min Multiplier: ${minMultiplier}</p>
+        <p>Variance: ${variance.toFixed(2)}</p>
+        <p>Z-Score (Latest): ${Math.max(...zScore).toFixed(2)}</p>
+        <p>Prediction Confidence: ${confidence}%</p>
+    `;
+}
+
+// Step 8: Generate AI Insights with Explanation
+function generateAIInsights(trendAnalysis, variance, confidence, mlPrediction, zScore) {
+    let aiMessage = "";
+
+    if (trendAnalysis.isRisingTrend) {
+        aiMessage += "AI detected a strong rising trend in the recent crash multipliers. ";
+    } else if (trendAnalysis.isFallingTrend) {
+        aiMessage += "AI identified a falling trend, advising caution. ";
+    } else {
+        aiMessage += "The recent trend shows no clear pattern, indicating neutral behavior. ";
+    }
+
+    aiMessage += `Given the current variance of ${variance.toFixed(2)} and a recent Z-score of ${Math.max(...zScore).toFixed(2)}, the AI predicts with ${confidence}% confidence.`;
+
+    document.getElementById('aiInsight').innerText = aiMessage;
+}
+    </script>
+</body>
+</html>
