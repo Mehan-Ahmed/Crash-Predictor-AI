@@ -163,7 +163,7 @@ button:hover {
     </div>
 
     <script>
-        function predictCrash() {
+ function predictCrash() {
     const previousCrashes = document.getElementById('previousCrashes').value.split(',').map(Number);
 
     // Step 1: Calculate basic statistics
@@ -179,17 +179,19 @@ button:hover {
     // Step 3: Predict next crash multiplier based on "advanced" algorithms
     let nextCrashMultiplier = generateAdvancedPrediction(mlPrediction, variance, avgMultiplier, trendAnalysis);
 
-    // Step 4: Calculate prediction confidence
+    // Step 4: Apply constraints (min 1.00, max 30.00)
+    nextCrashMultiplier = Math.max(1.00, Math.min(30.00, nextCrashMultiplier));
+
+    // Step 5: Calculate prediction confidence
     let predictionConfidence = calculatePredictionConfidence(variance, avgMultiplier, trendAnalysis);
 
-    // Step 5: Display results and AI insights
+    // Step 6: Display results and AI insights
     displayResults(nextCrashMultiplier, avgMultiplier, maxMultiplier, minMultiplier, variance, predictionConfidence);
     generateAIInsights(trendAnalysis, variance, predictionConfidence, mlPrediction);
 }
 
 // Advanced fake machine learning model
 function simulateMachineLearningModel(previousCrashes, avgMultiplier, trendAnalysis) {
-    // Fake machine learning model adjusting based on recent patterns
     let riskFactor = 0;
     if (trendAnalysis.isRisingTrend) {
         riskFactor = avgMultiplier * 0.8 + (Math.random() * 0.5); // Favoring high crashes
@@ -277,11 +279,12 @@ function displayResults(nextCrash, avgMultiplier, maxMultiplier, minMultiplier, 
     document.getElementById('analysis').innerHTML = `
         <p>Average Multiplier: ${avgMultiplier.toFixed(2)}</p>
         <p>Max Multiplier: ${maxMultiplier}</p>
-        <p>Min Multiplier: ${minMultiplier}</p>
+        <p>Min Multiplier: ${Math.max(1.00, minMultiplier)}</p> <!-- Ensuring minimum is 1.00 -->
         <p>Variance: ${variance.toFixed(2)}</p>
         <p>Prediction Confidence: ${confidence}%</p>
     `;
 }
+
     </script>
 </body>
 </html>
