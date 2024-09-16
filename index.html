@@ -3,288 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crash Predictor AI</title>
+    <title>Crash Predictor</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function updateInputs() {
+            const box1 = document.getElementById('box1');
+            const box2 = document.getElementById('box2');
+            const box3 = document.getElementById('box3');
+            const box4 = document.getElementById('box4');
+            const box5 = document.getElementById('box5');
+            const box6 = document.getElementById('box6');
+
+            if (box6.value !== '') {
+                box1.value = box2.value;
+                box2.value = box3.value;
+                box3.value = box4.value;
+                box4.value = box5.value;
+                box5.value = box6.value;
+                box6.value = '';
+            }
+        }
+
+        function predictCrash() {
+            const values = [
+                document.getElementById('box1').value,
+                document.getElementById('box2').value,
+                document.getElementById('box3').value,
+                document.getElementById('box4').value,
+                document.getElementById('box5').value,
+                document.getElementById('box6').value
+            ].filter(value => value !== '');
+
+            const previousCrashes = values.map(Number);
+
+            const avgMultiplier = previousCrashes.reduce((a, b) => a + b, 0) / previousCrashes.length;
+            const maxMultiplier = Math.max(...previousCrashes);
+            const minMultiplier = Math.min(...previousCrashes);
+            const variance = calculateVariance(previousCrashes, avgMultiplier);
+            const trendAnalysis = analyzeTrend(previousCrashes);
+
+            const mlPrediction = simulateMachineLearningModel(previousCrashes, avgMultiplier, trendAnalysis);
+
+            let nextCrashMultiplier = generateAdvancedPrediction(mlPrediction, variance, avgMultiplier, trendAnalysis);
+
+            nextCrashMultiplier = Math.max(1.00, Math.min(30.00, nextCrashMultiplier));
+
+            let predictionConfidence = calculatePredictionConfidence(variance, avgMultiplier, trendAnalysis);
+
+            displayResults(nextCrashMultiplier, avgMultiplier, maxMultiplier, minMultiplier, variance, predictionConfidence);
+            generateAIInsights(trendAnalysis, variance, predictionConfidence, mlPrediction);
+        }
+
+        function simulateMachineLearningModel(previousCrashes, avgMultiplier, trendAnalysis) {
+            let riskFactor = 0;
+            if (trendAnalysis.isRisingTrend) {
+                riskFactor = avgMultiplier * 0.8 + (Math.random() * 0.5);
+            } else {
+                riskFactor = avgMultiplier * 0.5 + (Math.random() * 0.2);
+            }
+
+            return riskFactor;
+        }
+
+        function generateAdvancedPrediction(mlPrediction, variance, avgMultiplier, trendAnalysis) {
+            let nextCrash = mlPrediction + Math.random() * variance;
+            if (trendAnalysis.isRisingTrend) {
+                nextCrash += Math.random();
+            } else if (trendAnalysis.isFallingTrend) {
+                nextCrash -= Math.random();
+            }
+
+            return Math.max(1.1, nextCrash.toFixed(2));
+        }
+
+        function calculateVariance(values, avg) {
+            return values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
+        }
+
+        function analyzeTrend(crashes) {
+            let risingCount = 0;
+            let fallingCount = 0;
+
+            for (let i = 1; i < crashes.length; i++) {
+                if (crashes[i] > crashes[i - 1]) {
+                    risingCount++;
+                } else {
+                    fallingCount++;
+                }
+            }
+
+            return {
+                isRisingTrend: risingCount > fallingCount,
+                isFallingTrend: fallingCount > risingCount,
+                isNeutral: risingCount === fallingCount
+            };
+        }
+
+        function calculatePredictionConfidence(variance, avgMultiplier, trendAnalysis) {
+            let confidence = 90;
+
+            if (variance > 1) {
+                confidence -= 10;
+            }
+            if (avgMultiplier > 2.5) {
+                confidence -= 5;
+            }
+            if (trendAnalysis.isFallingTrend) {
+                confidence -= 10;
+            }
+
+            return Math.min(99, confidence);
+        }
+
+        function displayResults(nextCrash, avgMultiplier, maxMultiplier, minMultiplier, variance, confidence) {
+            document.getElementById('result').innerText = `Predicted Next Crash: ${nextCrash}`;
+            document.getElementById('analysis').innerHTML = `
+                <p>Average Multiplier: ${avgMultiplier.toFixed(2)}</p>
+                <p>Max Multiplier: ${maxMultiplier}</p>
+                <p>Min Multiplier: ${Math.max(1.00, minMultiplier)}</p>
+                <p>Variance: ${variance.toFixed(2)}</p>
+                <p>Prediction Confidence: ${confidence}%</p>
+            `;
+        }
+
+        function generateAIInsights(trendAnalysis, variance, confidence, mlPrediction) {
+            let aiMessage = "";
+
+            if (trendAnalysis.isRisingTrend) {
+                aiMessage += "The AI detected a rising trend in recent crashes. ";
+            } else if (trendAnalysis.isFallingTrend) {
+                aiMessage += "The AI detected a falling trend. Caution is advised. ";
+            } else {
+                aiMessage += "The AI didn't detect a strong trend, indicating random behavior. ";
+            }
+
+            aiMessage += `Based on variance of ${variance.toFixed(2)}, the AI recommends a risk factor of ${mlPrediction.toFixed(2)} with a confidence of ${confidence}%.`;
+
+            document.getElementById('aiInsight').innerText = aiMessage;
+        }
+    </script>
     <style>
         /* General body styling */
-body {
-    font-family: 'Poppins', sans-serif;
-    background: url('https://i.ibb.co.com/2knGysX/images-1-7.jpg') no-repeat center center fixed;
-    background-size: cover;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    backdrop-filter: blur(5px);
-    color: #fff;
-}
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('https://i.ibb.co/2knGysX/images-1-7.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            backdrop-filter: blur(5px);
+            color: #fff;
+        }
 
-.container {
-    padding: 30px;
-    text-align: center;
-    width: 340px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    transition: transform 0.3s ease;
-}
+        .container {
+            padding: 30px;
+            text-align: center;
+            width: 340px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
 
-h1 {
-    margin-bottom: 25px;
-    color: #fff;
-    font-size: 28px;
-}
+        h1 {
+            margin-bottom: 25px;
+            color: #fff;
+            font-size: 28px;
+        }
 
-.input-container {
-    margin-bottom: 20px;
-}
+        .input-container {
+            margin-bottom: 20px;
+        }
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #fff;
-    font-size: 16px;
-}
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
 
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-}
+        input[type="text"]:focus {
+            border-color: #28a745;
+            outline: none;
+        }
 
-input[type="text"]:focus {
-    border-color: #28a745;
-    outline: none;
-}
+        button {
+            padding: 0.6em 2em;
+            margin-top: 20px;
+            border: none;
+            outline: none;
+            color: rgb(255, 255, 255);
+            background: #111;
+            cursor: pointer;
+            position: relative;
+            z-index: 0;
+            border-radius: 10px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
 
-button {
-  padding: 0.6em 2em;
-  border: none;
-  outline: none;
-  color: rgb(255, 255, 255);
-  background: #111;
-  cursor: pointer;
-  position: relative;
-  z-index: 0;
-  border-radius: 10px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
+        button:before {
+            content: "";
+            background: linear-gradient(
+                45deg,
+                #ff0000,
+                #ff7300,
+                #fffb00,
+                #48ff00,
+                #00ffd5,
+                #002bff,
+                #7a00ff,
+                #ff00c8,
+                #ff0000
+            );
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(5px);
+            -webkit-filter: blur(5px);
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            animation: glowing-button 20s linear infinite;
+            transition: opacity 0.3s ease-in-out;
+            border-radius: 10px;
+        }
 
-button:before {
-  content: "";
-  background: linear-gradient(
-    45deg,
-    #ff0000,
-    #ff7300,
-    #fffb00,
-    #48ff00,
-    #00ffd5,
-    #002bff,
-    #7a00ff,
-    #ff00c8,
-    #ff0000
-  );
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  background-size: 400%;
-  z-index: -1;
-  filter: blur(5px);
-  -webkit-filter: blur(5px);
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
-  animation: glowing-button 20s linear infinite;
-  transition: opacity 0.3s ease-in-out;
-  border-radius: 10px;
-}
+        @keyframes glowing-button {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
 
-@keyframes glowing-button {
-  0% {
-    background-position: 0 0;
-  }
-  50% {
-    background-position: 400% 0;
-  }
-  100% {
-    background-position: 0 0;
-  }
-}
+        button:after {
+            z-index: -1;
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #222;
+            left: 0;
+            top: 0;
+            border-radius: 10px;
+        }
 
-button:after {
-  z-index: -1;
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: #222;
-  left: 0;
-  top: 0;
-  border-radius: 10px;
-}
+        button:hover {
+            background-color: green;
+            transform: translateY(-3px);
+        }
 
-button:hover {
-    background-color: green;
-    transform: translateY(-3px);
-}
+        #result {
+            margin-top: 25px;
+            font-size: 20px;
+            color: yellow;
+        }
 
-#result {
-    margin-top: 25px;
-    font-size: 20px;
-    color: yellow;
-}
+        #analysis {
+            margin-top: 15px;
+            font-size: 16px;
+        }
 
-/* Optional: Google Font Import */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        #aiInsight {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #f5f5f5;
+        }
 
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            width: 45px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Crash Predictor AI</h1>
-        <div class="input-container">
-            <label for="previousCrashes">Previous Crash Multipliers:</label>
-            <input type="text" id="previousCrashes" placeholder="e.g. 1.5, 2.0, 3.1, 1.2, 2.8">
+        <h1>Crash Predictor</h1>
+        <div class="input-group">
+            <input type="text" id="box1" placeholder="*">
+            <input type="text" id="box2" placeholder="*">
+            <input type="text" id="box3" placeholder="*">
+            <input type="text" id="box4" placeholder="*">
+            <input type="text" id="box5" placeholder="*">
+            <input type="text" id="box6" placeholder="*">
         </div>
-        <button onclick="predictCrash()">Predict Next Crash</button>
+        <button onclick="updateInputs(); predictCrash();">Predict Next Crash</button>
         <div id="result"></div>
         <div id="analysis"></div>
         <div id="aiInsight"></div>
     </div>
-
-    <script>
- function predictCrash() {
-    const previousCrashes = document.getElementById('previousCrashes').value.split(',').map(Number);
-
-    // Step 1: Calculate basic statistics
-    const avgMultiplier = previousCrashes.reduce((a, b) => a + b, 0) / previousCrashes.length;
-    const maxMultiplier = Math.max(...previousCrashes);
-    const minMultiplier = Math.min(...previousCrashes);
-    const variance = calculateVariance(previousCrashes, avgMultiplier);
-    const trendAnalysis = analyzeTrend(previousCrashes);
-
-    // Step 2: Simulate machine learning prediction logic
-    const mlPrediction = simulateMachineLearningModel(previousCrashes, avgMultiplier, trendAnalysis);
-
-    // Step 3: Predict next crash multiplier based on "advanced" algorithms
-    let nextCrashMultiplier = generateAdvancedPrediction(mlPrediction, variance, avgMultiplier, trendAnalysis);
-
-    // Step 4: Apply constraints (min 1.00, max 30.00)
-    nextCrashMultiplier = Math.max(1.00, Math.min(30.00, nextCrashMultiplier));
-
-    // Step 5: Calculate prediction confidence
-    let predictionConfidence = calculatePredictionConfidence(variance, avgMultiplier, trendAnalysis);
-
-    // Step 6: Display results and AI insights
-    displayResults(nextCrashMultiplier, avgMultiplier, maxMultiplier, minMultiplier, variance, predictionConfidence);
-    generateAIInsights(trendAnalysis, variance, predictionConfidence, mlPrediction);
-}
-
-// Advanced fake machine learning model
-function simulateMachineLearningModel(previousCrashes, avgMultiplier, trendAnalysis) {
-    let riskFactor = 0;
-    if (trendAnalysis.isRisingTrend) {
-        riskFactor = avgMultiplier * 0.8 + (Math.random() * 0.5); // Favoring high crashes
-    } else {
-        riskFactor = avgMultiplier * 0.5 + (Math.random() * 0.2); // Favoring lower crashes
-    }
-
-    return riskFactor;
-}
-
-// Advanced prediction algorithm with trend and machine learning adjustments
-function generateAdvancedPrediction(mlPrediction, variance, avgMultiplier, trendAnalysis) {
-    let nextCrash = mlPrediction + Math.random() * variance;
-    if (trendAnalysis.isRisingTrend) {
-        nextCrash += Math.random(); // Amplify the rising trend
-    } else if (trendAnalysis.isFallingTrend) {
-        nextCrash -= Math.random(); // Penalize falling trend
-    }
-
-    return Math.max(1.1, nextCrash.toFixed(2)); // Ensuring it doesn't go below 1.1
-}
-
-// Fake AI insights generation
-function generateAIInsights(trendAnalysis, variance, confidence, mlPrediction) {
-    let aiMessage = "";
-
-    if (trendAnalysis.isRisingTrend) {
-        aiMessage += "The AI detected a rising trend in recent crashes. ";
-    } else if (trendAnalysis.isFallingTrend) {
-        aiMessage += "The AI detected a falling trend. Caution is advised. ";
-    } else {
-        aiMessage += "The AI didn't detect a strong trend, indicating random behavior. ";
-    }
-
-    aiMessage += `Based on variance of ${variance.toFixed(2)}, the AI recommends a risk factor of ${mlPrediction.toFixed(2)} with a confidence of ${confidence}%.`;
-
-    document.getElementById('aiInsight').innerText = aiMessage;
-}
-
-// Helper function to calculate variance
-function calculateVariance(values, avg) {
-    return values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
-}
-
-// Analyze trends to find rising or falling patterns
-function analyzeTrend(crashes) {
-    let risingCount = 0;
-    let fallingCount = 0;
-
-    for (let i = 1; i < crashes.length; i++) {
-        if (crashes[i] > crashes[i - 1]) {
-            risingCount++;
-        } else {
-            fallingCount++;
-        }
-    }
-
-    return {
-        isRisingTrend: risingCount > fallingCount,
-        isFallingTrend: fallingCount > risingCount,
-        isNeutral: risingCount === fallingCount
-    };
-}
-
-// Fake confidence calculation
-function calculatePredictionConfidence(variance, avgMultiplier, trendAnalysis) {
-    let confidence = 90; // Starting at 90% for fake high confidence
-
-    if (variance > 1) {
-        confidence -= 10; // Reduce confidence on higher variance
-    }
-    if (avgMultiplier > 2.5) {
-        confidence -= 5; // Lower confidence for risky high multipliers
-    }
-    if (trendAnalysis.isFallingTrend) {
-        confidence -= 10; // Less confidence in falling trends
-    }
-
-    return Math.min(99, confidence); // Capping confidence at 99%
-}
-
-// Display result and statistical analysis
-function displayResults(nextCrash, avgMultiplier, maxMultiplier, minMultiplier, variance, confidence) {
-    document.getElementById('result').innerText = `Predicted Next Crash Multiplier: ${nextCrash}`;
-    document.getElementById('analysis').innerHTML = `
-        <p>Average Multiplier: ${avgMultiplier.toFixed(2)}</p>
-        <p>Max Multiplier: ${maxMultiplier}</p>
-        <p>Min Multiplier: ${Math.max(1.00, minMultiplier)}</p> <!-- Ensuring minimum is 1.00 -->
-        <p>Variance: ${variance.toFixed(2)}</p>
-        <p>Prediction Confidence: ${confidence}%</p>
-    `;
-}
-
-    </script>
 </body>
 </html>
